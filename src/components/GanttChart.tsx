@@ -94,6 +94,15 @@ export function GanttChart({ projects }: GanttChartProps) {
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
+    // Calculate timeline first (needed for canvas sizing)
+    const allDates = projects.flatMap(p => [
+      new Date(p.startDate).getTime(),
+      new Date(p.targetCompletionDate).getTime()
+    ]);
+    const minDate = Math.min(...allDates);
+    const maxDate = Math.max(...allDates);
+    const dateRange = maxDate - minDate;
+
     const dpr = window.devicePixelRatio || 2;
     const updateSize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -116,20 +125,10 @@ export function GanttChart({ projects }: GanttChartProps) {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Calculate timeline
-    const allDates = projects.flatMap(p => [
-      new Date(p.startDate).getTime(),
-      new Date(p.targetCompletionDate).getTime()
-    ]);
-    const minDate = Math.min(...allDates);
-    const maxDate = Math.max(...allDates);
-    const dateRange = maxDate - minDate;
-
     const leftMargin = 340;
     const rightMargin = 120;
     const topMargin = 160;
-    const minCanvasWidth = Math.max(1600, (dateRange / (30 * 24 * 60 * 60 * 1000)) * 150);
-    const effectiveWidth = Math.max(width, minCanvasWidth);
+    const effectiveWidth = width; // Canvas width already set by updateSize()
     const chartWidth = effectiveWidth - leftMargin - rightMargin;
     const rowHeight = 120;
 
