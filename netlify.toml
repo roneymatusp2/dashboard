@@ -4,9 +4,6 @@
   
   # Directory to publish (output directory)
   publish = "build"
-  
-  # Directory with the serverless Lambda functions
-  functions = "src/supabase/functions"
 
 [build.environment]
   # Node version
